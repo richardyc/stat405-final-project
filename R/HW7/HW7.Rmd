@@ -1,6 +1,8 @@
 ---
 title: "2011 - 2013 Divorce in Texas"
 output: pdf_document
+fontsize: 10pt
+geometry: margin=1in
 ---
 
 ```{r setup, include=FALSE}
@@ -21,8 +23,9 @@ This is the format of our raw divorce record data:
 ```{r}
 div11$date_diff <- as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y") -
                   as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y")
-div11$year_diff <- as.integer((as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y") -
-                  as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y")) / 365)
+div11$date_diff <- if (as.numeric(div11$date_diff > 0)) div11$date_diff else NA
+
+div11$year_diff <- as.numeric(div11$date_diff / 365.0)
 
 head(div11)
 ```
@@ -33,5 +36,13 @@ p + layer(geom = "bar", stat = "bin",
           params = list(fill = "red", binwidth = 50)) +
   ggtitle("Numberof Days in Marriage") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  labs(x = "Marriage Length", y = "count")
+  labs(x = "Marriage Length in days", y = "count")
+
+p <- ggplot(div11) + aes(x = year_diff) + xlim(0, 80)
+p + layer(geom = "bar", stat = "bin",
+          position = "identity",
+          params = list(fill = "red", binwidth = 1)) +
+  ggtitle("Numberof Years in Marriage") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  labs(x = "Marriage Length in years", y = "count")
 ```
