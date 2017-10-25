@@ -7,16 +7,24 @@ output: pdf_document
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(ggplot2)
+
+# Loading the divorce data
+div11 <- read.csv(file = "../../Data/Divorce/div11.csv",
+                  header = TRUE, sep = ",")
+#div12 <- read.csv(file = "../../Data/Divorce/div12.csv",
+#                  header = TRUE, sep = ",")
+#div13 <- read.csv(file = "../../Data/Divorce/div13.csv",
+#                  header = TRUE, sep = ",")
 ```
 
+This is the format of our raw divorce record data:
 ```{r}
-div11 <- read.csv(file = "/Users/gyuanrui/Desktop/STAT/405/Divorce/div11.csv",
-                  header = TRUE, sep = ",")
 div11$date_diff <- as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y") -
                   as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y")
 div11$year_diff <- as.integer((as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y") -
                   as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y")) / 365)
-div11
+
+head(div11)
 ```
 ```{r}
 p <- ggplot(div11) + aes(x = date_diff) + xlim(0, 17000)
