@@ -1,0 +1,29 @@
+---
+title: "2011 - 2013 Divorce in Texas"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+div11 <- read.csv(file = "/Users/gyuanrui/Desktop/STAT/405/Divorce/div11.csv",
+                  header = TRUE, sep = ",")
+div11$date_diff <- as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y") -
+                  as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y")
+div11$year_diff <- as.integer((as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y") -
+                  as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y")) / 365)
+div11
+```
+```{r}
+p <- ggplot(div11) + aes(x = date_diff) + xlim(0, 17000)
+p + layer(geom = "bar", stat = "bin",
+          position = "identity",
+          params = list(fill = "red", binwidth = 50)) +
+  ggtitle("Numberof Days in Marriage") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  labs(x = "Marriage Length", y = "count")
+```
