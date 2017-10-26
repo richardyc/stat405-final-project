@@ -11,7 +11,7 @@ library(tidyverse)
 library(ggplot2)
 
 # Loading the divorce data
-div11 <- read.csv(file = "../../Data/Divorce/div11.csv",
+div11 <- read.csv(file = "../../Data/Divorce/div11-13.csv",
                   header = TRUE, sep = ",")
 #div12 <- read.csv(file = "../../Data/Divorce/div12.csv",
 #                  header = TRUE, sep = ",")
@@ -29,17 +29,22 @@ div11$year_diff <- as.numeric(div11$date_diff / 365.0)
 
 head(div11)
 ```
+\pagebreak
+
+## Analysis No.1: Marriage Length v.s. Number of Divorces
 ```{r echo=FALSE, fig.height = 6, fig.width = 6}
 p <- ggplot(div11) + aes(x = date_diff) + xlim(0, 17000)
 p + layer(geom = "bar", stat = "bin",
           position = "identity",
           params = list(fill = "red", binwidth = 50)) +
-  ggtitle("Numberof Days in Marriage") +
+  ggtitle("Marriage Length v.s. Number of Divorces") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  labs(x = "Marriage Length in days", y = "count")
+  labs(x = "Marriage Length (in days)", y = "Number of Divorces")
 ```
+\pagebreak
 
 
+## Analysis No.2: Number of Children v.s. Age Difference Between Husband and Wife
 ```{r echo=FALSE, fig.height = 6, fig.width = 6}
 # Create the scatter plot
 div11$age_diff <- as.numeric(as.character(div11$H_AGE)) -
@@ -47,18 +52,22 @@ div11$age_diff <- as.numeric(as.character(div11$H_AGE)) -
 data <- div11[div11$date_diff > 0 & as.numeric(as.character(div11$NUM_CHILD)) > 0 & !is.na(div11$age_diff),]
 x <- as.numeric(as.character(data$NUM_CHILD))
 y <- abs(as.numeric(as.character(data$W_AGE)) - as.numeric(as.character(data$H_AGE)))
-plot(x, y, main="Relation between absolute age difference between wife and husband and number of children",
+plot(x, y, main="Number of Children v.s. Age Difference",
      xlab="Number of Children", ylab="Wife and Husband Absolute Age Difference", col="grey", xlim = c(0, 11),
      axes = TRUE)
 # Currently there exist a data entry for having 40 children, however we currently is investigating on whether it is a data entry error
 # We are also currently eliminating entries with 0 children for this graph since we want to show that.
 
 # The summary of the regression line
-summary(lm(y~x))
+#summary(lm(y~x))
 abline(lm(y~x), col="blue")
 ```
+(Currently there exist a data entry for having 40 children, however we currently is investigating on whether it is a data entry error. We are also currently eliminating entries with 0 children for this graph since we want to show that.)
 We can see from the first graph that, as the regression line suggest, the more number of children that the family has, the less difference there is in their age.
+\pagebreak
 
+
+## Analysis No.3: Has Child or Not v.s. Marriage Length (in years)
 ```{r echo=FALSE, fig.height = 6, fig.width = 6}
 
 data <- div11[div11$date_diff > 0,]
@@ -74,35 +83,52 @@ summary(lm(y2~x2))
 abline(lm(y2~x2), col="green")
 ```
 We can see from the regression that couple with longer marriaged years has a slightly bigger chance of having at least one child.
+\pagebreak
 
 
+## Analysis No.4: Couple Average Age v.s. Number of Divorces 
 ```{r echo=FALSE, fig.height = 6, fig.width = 6}
-## Age difference between husband and wife.
-div11$age_diff <- as.numeric(as.character(div11$H_AGE)) -
-  as.numeric(as.character(div11$W_AGE))
-## Absolute value of age difference.
-div11$age_range <- abs(as.integer(div11$age_diff / 5) * 5)
-## Modify the age range to fit the legend for Graph IV.
-div11$age_range_modified <- ifelse(div11$age_range != 5,
-                                   paste(as.character(div11$age_range),
-                                         as.character(div11$age_range + 5), sep=" ~ "),
-                                   "05 ~ 10")
-## Plot the relationship between years of marriage and couple age difference.
-## A.k.a how many couples that are in a certain age difference range have the 
+## The average of husband's age and wife's age.
+div11$avr_age <- (as.numeric(as.character(div11$H_AGE)) +
+                    as.numeric(as.character(div11$W_AGE))) / 2
+## Determine which range the average couple age falls in.
+div11$avr_range <- abs(as.integer(div11$avr_age / 10) * 10)
+## Modify the age range to fit the legend for the graph.
+div11$avr_range_modified <- paste(as.character(as.integer(div11$avr_range)),
+                                  as.character(as.integer(div11$avr_range) + 10),
+                                  sep=" ~ ")
+## Exclude the NA values in average age.
+div111 <- subset(div11, !is.na(div11$avr_range))
+
+## Plot the relationship between years of marriage and couple average age.
+## A.k.a how many couples that are in a certain average age range have the 
 ## corresponding marriage length.
-ggplot(data = div11) + 
-  aes(x = year_diff, fill = factor(age_range_modified)) +
+ggplot(data = div111) + 
+  aes(x = year_diff, fill = factor(avr_range_modified)) +
   xlim(0, 60) +
   geom_histogram(binwidth = 1, color = "black") +
-  ggtitle("Years of Marriage and Couple Age Difference") +
+  ggtitle("Years of Marriage and Couple Average Age") +
   theme(plot.title = element_text(hjust = 0.5))  +
-  labs(x = "Years of Marriage", y = "count") +
-  guides(fill = guide_legend(title = "Age Difference"))
+  labs(x = "Years of Marriage", y = "Number of Divorces") +
+  guides(fill = guide_legend(title = "Age Range"))
 
 ```
-
-
 Marriage length of year 2013
+
+Hypothesis:
+Younger couples who divorce in Texas in 2011 tend to have a shorter marriage, while elder couples who divorce will have a longer marriage.
+
+Analysis:
+From the graph above, we can see that the average age of couples who divorce in Texas in 2011 mainly lies between 20 to 60.
+Obviously, couples with average age of 20-30 and 30-40 who divorce in Texas in 2011 have a relatively shorter period of marriage than those in their 40s, 50s, or above. This also makes sense intuitively, as younger people have experienced a shorter period of time since they became legal to marry than those who are elder.
+However, the number of couples who divorce in Texas in 2011 and have an average age between 40-60 stays almost the same for different lengths of marriage, which contradicts the second half of our hypothesis.
+
+Conclusion:
+Younger couples who divorce in Texas in 2011 tend to have a shorter marriage, while for elder couples who divorce in Texas in 2011, the length of marriage does not vary a lot among them.
+\pagebreak
+
+
+## Analysis No.5: Month in a Year v.s. Number of Divorces
 ```{r}
 D1 <- mutate(div11, diff = as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y") - as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y"))
 ```
@@ -125,3 +151,17 @@ plot(div_month$Freq,type = "o",col = "red", xlab = "Month", ylab = "div11",
    main = "div11 by Month")
 lines(div_month$freq2, type = "o", col = "blue")
 ```
+
+Hypothesis??? Most people tend to choose to divorce and get married in the middle of the year.
+
+This graph is about the number of divorce and marriage in every month. In the above graph, the red line represents number of divorce and the blue line represents number of marriage. The x-axis is month and the y-axis is number of divorce or marriage. From the above graph, we can find that:
+1. About divorce: Most divorce happens in June and least divorce happens in January. The distribution of divorce by month is similar to normal distribution with more divorce occuring in the middle of the year and less occuring at the beginning or end of the year.
+
+2. About marriage: Most marriage happens in June and least marriage happens in Febrary. The graph indicates that marriage is not distributed evenly, and we cannot find an exact distribution for marriage based on month.
+
+3. Similarities and differences: Both divorce and marriage happens most frequently in June. But unlike divorce, there is not a regular and exact distribution for marriage.
+
+The analysis above inferred from the graph supports my hypothesis.
+\pagebreak
+
+## Conclusions to the Question
