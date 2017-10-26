@@ -23,13 +23,13 @@ This is the format of our raw divorce record data:
 ```{r}
 div11$date_diff <- as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y") -
                   as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y")
-div11$date_diff <- if (as.numeric(div11$date_diff > 0)) div11$date_diff else NA
+div11$date_diff <- div11$date_diff
 
 div11$year_diff <- as.numeric(div11$date_diff / 365.0)
 
 head(div11)
 ```
-```{r}
+```{r echo=FALSE, fig.height = 6, fig.width = 6}
 p <- ggplot(div11) + aes(x = date_diff) + xlim(0, 17000)
 p + layer(geom = "bar", stat = "bin",
           position = "identity",
@@ -37,12 +37,91 @@ p + layer(geom = "bar", stat = "bin",
   ggtitle("Numberof Days in Marriage") +
   theme(plot.title = element_text(hjust = 0.5)) +
   labs(x = "Marriage Length in days", y = "count")
+```
 
-p <- ggplot(div11) + aes(x = year_diff) + xlim(0, 80)
-p + layer(geom = "bar", stat = "bin",
-          position = "identity",
-          params = list(fill = "red", binwidth = 1)) +
-  ggtitle("Numberof Years in Marriage") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  labs(x = "Marriage Length in years", y = "count")
+
+```{r echo=FALSE, fig.height = 6, fig.width = 6}
+# Create the scatter plot
+div11$age_diff <- as.numeric(as.character(div11$H_AGE)) -
+  as.numeric(as.character(div11$W_AGE))
+data <- div11[div11$date_diff > 0 & as.numeric(as.character(div11$NUM_CHILD)) > 0 & !is.na(div11$age_diff),]
+x <- as.numeric(as.character(data$NUM_CHILD))
+y <- abs(as.numeric(as.character(data$W_AGE)) - as.numeric(as.character(data$H_AGE)))
+plot(x, y, main="Relation between absolute age difference between wife and husband and number of children",
+     xlab="Number of Children", ylab="Wife and Husband Absolute Age Difference", col="grey", xlim = c(0, 11),
+     axes = TRUE)
+# Currently there exist a data entry for having 40 children, however we currently is investigating on whether it is a data entry error
+# We are also currently eliminating entries with 0 children for this graph since we want to show that.
+
+# The summary of the regression line
+summary(lm(y~x))
+abline(lm(y~x), col="blue")
+```
+We can see from the first graph that, as the regression line suggest, the more number of children that the family has, the less difference there is in their age.
+
+```{r echo=FALSE, fig.height = 6, fig.width = 6}
+
+data <- div11[div11$date_diff > 0,]
+
+x2 <- as.numeric(as.character(data$NUM_CHILD)) > 0
+y2 <- as.numeric(data$year_diff)
+plot(x2, y2, main="Relation between Marriaged Years and Child",
+     xlab="Has child or not", ylab="Years in Marriage", col="gray",
+     axes = TRUE)
+# Invalid data for 40 children, using xlim, eliminating set with 0 children
+
+summary(lm(y2~x2))
+abline(lm(y2~x2), col="green")
+```
+We can see from the regression that couple with longer marriaged years has a slightly bigger chance of having at least one child.
+
+
+```{r echo=FALSE, fig.height = 6, fig.width = 6}
+## Age difference between husband and wife.
+div11$age_diff <- as.numeric(as.character(div11$H_AGE)) -
+  as.numeric(as.character(div11$W_AGE))
+## Absolute value of age difference.
+div11$age_range <- abs(as.integer(div11$age_diff / 5) * 5)
+## Modify the age range to fit the legend for Graph IV.
+div11$age_range_modified <- ifelse(div11$age_range != 5,
+                                   paste(as.character(div11$age_range),
+                                         as.character(div11$age_range + 5), sep=" ~ "),
+                                   "05 ~ 10")
+## Plot the relationship between years of marriage and couple age difference.
+## A.k.a how many couples that are in a certain age difference range have the 
+## corresponding marriage length.
+ggplot(data = div11) + 
+  aes(x = year_diff, fill = factor(age_range_modified)) +
+  xlim(0, 60) +
+  geom_histogram(binwidth = 1, color = "black") +
+  ggtitle("Years of Marriage and Couple Age Difference") +
+  theme(plot.title = element_text(hjust = 0.5))  +
+  labs(x = "Years of Marriage", y = "count") +
+  guides(fill = guide_legend(title = "Age Difference"))
+
+```
+
+
+Marriage length of year 2013
+```{r}
+D1 <- mutate(div11, diff = as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y") - as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y"))
+```
+
+```{r}
+D1$div_month <- strftime(as.Date(as.character(div11$DIV_DATE), format = "%m/%d/%y"), "%m")
+D1$marr_month <- strftime(as.Date(as.character(div11$MARR_DATE), format = "%m/%d/%y"), "%m")
+```
+
+```{r}
+div_month_num <- table(D1$div_month)
+marr_month_num <- table(D1$marr_month)
+div_month <- data.frame(div_month_num)
+marr_month <- data.frame(marr_month_num)
+div_month$freq2 <- marr_month$Freq
+```
+
+```{r}
+plot(div_month$Freq,type = "o",col = "red", xlab = "Month", ylab = "div11", 
+   main = "div11 by Month")
+lines(div_month$freq2, type = "o", col = "blue")
 ```
