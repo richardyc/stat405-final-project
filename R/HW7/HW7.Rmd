@@ -41,6 +41,17 @@ p + layer(geom = "bar", stat = "bin",
   theme(plot.title = element_text(hjust = 0.5)) +
   labs(x = "Marriage Length (in days)", y = "Number of Divorces")
 ```
+
+&nbsp;
+
+Hypothesis:
+We assumed that the longer a couple is in marriage, the less likely that they will divorce. Thus, our hypothesis is that as the marriage length increases, the number of divorces will constantly decrease. 
+
+Analysis:
+The graph shows that when marriage length is shorter than 1200 days (approximately), the number of divorce increases as the marriage length increases. When the marriage length is longer than 1200 days (approximately), the number of divorces decreases as the marriage length increases. 
+
+Conclusion:
+The second part of the analysis corresponds to the hypothesis because the number of divorces decreases as marriage length increases when marriage length is larger than 1200 days. However, the first part of the analysis contradicts with our hypothesis because the number of divorcess increases as marriage length increases when marriage length is shorter than 1200 days. 
 \pagebreak
 
 
@@ -62,16 +73,20 @@ plot(x, y, main="Number of Children v.s. Age Difference",
 #summary(lm(y~x))
 abline(lm(y~x), col="blue")
 ```
-*Note on the data:
+\pagebreak
+
+&nbsp;
+
+*Note on the data: 
 Currently there exist a data entry for having 40 children, however we currently is investigating on whether it is a data entry error. We are also currently eliminating entries with 0 children for this graph since we want to show the relation between having more child and longer marriage.
 
 Hypothesis:
 The number of children that the family has has a negative relation to the difference in the couples age.
 
 Analysis:
-From the regression line that the more number of children that the family has, the less difference there is in their age. However, the relation is not very strong.
-We can see that there are primarily two problems:
-1. There are a lot more data points for family that has less than three child than more than three child.
+From the regression line we can see that the more number of children that the family has, the less difference there is in their age. However, the relation is not very strong. 
+We can see that there are primarily two problems: 
+1. There are a lot more data points for family that has less than three child than more than three child. 
 2. The variance of age difference is usually very large for each bar.
 
 Conclusion:
@@ -91,20 +106,20 @@ plot(x2, y2, main="Relation between Marriaged Years and Child",
      axes = TRUE)
 # Invalid data for 40 children, using xlim, eliminating set with 0 children
 
-summary(lm(y2~x2))
+# summary(lm(y2~x2))
 abline(lm(y2~x2), col="green")
 ```
-We can see from the regression that couple with longer marriaged years has a slightly bigger chance of having at least one child.
-If a family has a children, they have a longer lasting marriage.
+
+&nbsp;
 
 Hypothesis:
+Our hypothesis is that the couple with at least one child is more likely to have a longer marriage.
 
-
-Analysis:
+Anlysis:
+We can see from the regression line that couple with at least one child has a slightly longer marriage.
 
 Conclusion:
-
-
+The analysis supports the hypothesis, but a bit weakly. The relationship is not that strong.
 \pagebreak
 
 
@@ -135,18 +150,23 @@ ggplot(data = div11_131) +
   guides(fill = guide_legend(title = "Age Range"))
 
 ```
-Marriage length of year 2013
+\pagebreak
+
+&nbsp;
 
 Hypothesis:
-Younger couples who divorce in Texas in 2011 tend to have a shorter marriage, while elder couples who divorce will have a longer marriage.
+Younger couples tend to have a shorter marriage length, while elder couples who divorce will have a longer marriage length.
 
 Analysis:
-From the graph above, we can see that the average age of couples who divorce in Texas in 2011 mainly lies between 20 to 60.
-Obviously, couples with average age of 20-30 and 30-40 who divorce in Texas in 2011 have a relatively shorter period of marriage than those in their 40s, 50s, or above. This also makes sense intuitively, as younger people have experienced a shorter period of time since they became legal to marry than those who are elder.
-However, the number of couples who divorce in Texas in 2011 and have an average age between 40-60 stays almost the same for different lengths of marriage, which contradicts the second half of our hypothesis.
+
+1. Obviously, couples with average age of 20-30 and 30-40 have a relatively shorter period of marriage than those in their 40s, 50s, or above. This also makes sense intuitively, as younger people have experienced a shorter period of time since they became legal to marry than those who are elder.
+
+2. However, the number of couples who have an average age between 40-60 stays almost the same for different marriage lengths, which contradicts the second half of our hypothesis.
+
+3. When marriage length is less than 20 years, for fixed marriage length, most divorce cases happen to couples who are 20 to 40 years old. 
 
 Conclusion:
-Younger couples who divorce in Texas in 2011 tend to have a shorter marriage, while for elder couples who divorce in Texas in 2011, the length of marriage does not vary a lot among them.
+Younger couples tend to have a shorter marriage, while for elder couples, the length of marriage does not vary too much among them. When marriage length is less than 20 years, most divorce cases happen to couples who are 20 to 40 years old. 
 \pagebreak
 
 
@@ -169,21 +189,51 @@ div_month$freq2 <- marr_month$Freq
 ```
 
 ```{r}
-plot(div_month$Freq,type = "o",col = "red", xlab = "Month", ylab = "div11_13", 
-   main = "div11_13 by Month")
+plot(div_month$Freq,type = "o",col = "red", xlab = "Month", ylab = "Count", 
+   main = "Divorce and Marriage by Month", ylim = c(14000, 23000))
 lines(div_month$freq2, type = "o", col = "blue")
+legend(5, 17000, legend = c("divorce", "marriage"), lty=c(1,1), col = c("red", "blue"))
 ```
 
-Hypothesis??? Most people tend to choose to divorce and get married in the middle of the year.
+&nbsp;
 
+Hypothesis:
+Most people tend to choose to get married in the middle of the year and to divorce in January or December.
+
+(We get to this hypothesis based on the following: 
+a. In the middle of the year, the weather is very nice, and people tend to be in good mood. Therefore, people are willing to hold wedding ceremony in the middle of the year.
+b. January and December are very cold. And people are very likely to be depressed by the coldness. Therefore, such depression might trigger divorce.)
+
+
+Analysis:
 This graph is about the number of divorce and marriage in every month. In the above graph, the red line represents number of divorce and the blue line represents number of marriage. The x-axis is month and the y-axis is number of divorce or marriage. From the above graph, we can find that:
-1. About divorce: Most divorce happens in June and least divorce happens in January. The distribution of divorce by month is similar to normal distribution with more divorce occuring in the middle of the year and less occuring at the beginning or end of the year.
+1. About divorce: Most divorce happens in May and least divorce happens in February. The number of divorces increases from February to May, and oscilates between 18000 and 21000 after May.The graph indicates that divorce is not distributed evenly, and we cannot find an exact distribution for divorce based on month.
 
-2. About marriage: Most marriage happens in June and least marriage happens in Febrary. The graph indicates that marriage is not distributed evenly, and we cannot find an exact distribution for marriage based on month.
+2. About marriage: Most marriage happens in June and least marriage happens in January.The number of marriage increases from Janauary to June and decreases after June (oscilates after September). The distribution of marriage by month is a bit similar to normal distribution with more marriage occuring in the middle of the year and less occuring at the beginning or end of the year.
 
-3. Similarities and differences: Both divorce and marriage happens most frequently in June. But unlike divorce, there is not a regular and exact distribution for marriage.
+3. Similarities and differences: Both divorce and marriage happen most frequently in the middle of the year and least at the beginning of the year.
 
-The analysis above inferred from the graph supports my hypothesis.
+Conclusion:
+The analysis above inferred from the graph supports my hypothesis on marriage but does not support my hyhothesis on divorce(Most people divorce in May not at the beginning or end of the year).
 \pagebreak
 
+
 ## Conclusions to the Question
+Re-cap of the project question: How are different factors (including length of marriage, average age of the couple, age difference between husband and wife of the couple, number of children the couple has, and which month in a year the couple got married and got divorced) related to the number of divorces in Texas throughout 2011-2013? And are there any relationship between some of those factors?
+
+According to our five analysis above, we've found that:
+1. Relationship between marriage length and number of divorces.
+When the marriage length is less than 1200 days (approximately 3 years), the number of divorces intreases as the marriage length increases, which means that when a couple has been married for less than 3 years, it becomes more and more likely for this couple to get divorced as their marriage continues. However, when the marriage length is more than 1200 days, the number of divorces decreases as the marriage length increases, which means that when a couple has been married for more than 3 years, it's less and less likely for them to get divorced as their marriage continues.
+2. Relationship between the two factors, "number of children"" and "age difference between husband and wife", is not strong enough.
+3. Relationship between the two factors, "has a child or not" and "marriage length", is not strong enough.
+4. Younger couples tend to have a shorter marriage, while for elder couples, the length of marriage does not vary too much among them. When marriage length is less than 20 years, most divorce cases happen to couples who are 20 to 40 years old. 
+5. Most people tend to get married and get divorced in the middle of the year. 
+\pagebreak
+
+
+## To-Do List for future. 
+Find the optimal secondary data set for further analysis. Currently we have two data sets available for us to use:
+  - Airbnb listing data by location
+  - Weather data by zip code
+Using these data we can do further anaylsis such as the influence of airbnb listings and divorce indexes, the relation between good/bad weather and number of divorce/marriage records on that date, etc.
+
